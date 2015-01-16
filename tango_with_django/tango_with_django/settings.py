@@ -69,7 +69,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Nairobi'
 
 USE_I18N = True
 
@@ -82,3 +82,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+
+TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
+MEDIA_URL = 'rango/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL)
+
+print("MEDIA_ROOT : " + MEDIA_ROOT)
