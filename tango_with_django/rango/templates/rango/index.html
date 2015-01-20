@@ -7,8 +7,29 @@
     </head>
     <body>
         <h1>Rango says... "Hello World!"</h1>
-        <img src="{% static 'rango/img/rango.jpg' %}" alt="Picture of Rango">
-        <hr />
-        <a href="/rango/about/">About Me</a>
+        
+        {% if categories %}
+            <ul>
+                {% for category in categories %}
+                    <li><a href="/rango/category/{{ category.slug }}">{{ category.name }}</a></li>
+                {% endfor %}
+            </ul>
+
+            {% if pages %}
+                <h2>Top Viewed Pages</h2>
+                <ul>
+                    {% for page in pages %}
+                        <li><a href="{{ page.url }}">{{ page.title }}</a> -- (<small>{{ page.views }} views</small>)</li>
+                    {% endfor %}
+                </ul>
+                
+            {% endif %}
+        {% else %}
+            <strong>There are no categories present</strong>
+        {% endif %}
+
+        <div class="footer">
+            <a href="/rango/about/">About Me</a>
+        </div>
     </body>
 </html>

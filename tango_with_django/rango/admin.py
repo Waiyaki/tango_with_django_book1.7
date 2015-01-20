@@ -5,6 +5,7 @@ from .models import Category, Page
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'views', 'likes']
+    prepopulated_fields = {'slug': ('name',)}
 
 
 class PageAdmin(admin.ModelAdmin):
