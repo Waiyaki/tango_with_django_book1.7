@@ -1,35 +1,31 @@
-<!DOCTYPE html>
+{% extends "rango/base.html" %}
 
 {% load staticfiles %}
-<html>
-    <head>
-        <title>Rango</title>
-    </head>
-    <body>
+
+{% block body_block %}
+    {% if user.is_authenticated %}
+        <h1>Rango says... Hello {{ user.username }}</h1>
+    {% else %}
         <h1>Rango says... "Hello World!"</h1>
-        
-        {% if categories %}
+    {% endif %}
+
+    {% if categories %}
+        <ul>
+            {% for category in categories %}
+                <li><a href="{% url 'rango:category' category.slug %}">{{ category.name }}</a></li>
+            {% endfor %}
+        </ul>
+
+        {% if pages %}
+            <h2>Top Viewed Pages</h2>
             <ul>
-                {% for category in categories %}
-                    <li><a href="/rango/category/{{ category.slug }}">{{ category.name }}</a></li>
+                {% for page in pages %}
+                    <li><a href="{{ page.url }}">{{ page.title }}</a> -- (<small>{{ page.views }} views</small>)</li>
                 {% endfor %}
             </ul>
-
-            {% if pages %}
-                <h2>Top Viewed Pages</h2>
-                <ul>
-                    {% for page in pages %}
-                        <li><a href="{{ page.url }}">{{ page.title }}</a> -- (<small>{{ page.views }} views</small>)</li>
-                    {% endfor %}
-                </ul>
-                
-            {% endif %}
-        {% else %}
-            <strong>There are no categories present</strong>
+            
         {% endif %}
-
-        <div class="footer">
-            <a href="/rango/about/">About Me</a>
-        </div>
-    </body>
-</html>
+    {% else %}
+        <strong>There are no categories present</strong>
+    {% endif %}
+{% endblock body_block %}

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+{% extends "rango/base.html" %}
+{% block title %}
+    {{ category.name }} - Add a Page.
+{% endblock %}
+
+{% block body_block %}
+    <div class="container">
+        <h1>Add a page to {{ category.name }}</h1>
+        
+        <form id="page_form" method="post" action="{% url 'rango:add_page' category.slug %}">
+            {% csrf_token %}
+            {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+
+            {% for field in form.visible_fields %}
+                {{ field.errors }} <br>
+                {{ field.help_text }} <br>
+                {{ field }}<br>
+            {% endfor %}
+            <br>
+            <input type="submit" value="submit" />
+        </form>
+    </div>
+{% endblock %}
+        
+    </body>
+</html>
+
+<!--
+<form method="post" action="{% url 'rango.views.add_page' category_name_slug=category.slug %}" class="form">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="pageName">Page Title</label>
+                    <input type="text" class="form-control" id="pageName" placeholder="Page Title" />
+                </div>
+                <div class="form-group">
+                    <label for="url">Page URL</label>
+                    <input type="text" class="form-control" id="url" placeholder="Page URL" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="reset" class="btn btn-default">Reset</button>
+            </form>
+-->

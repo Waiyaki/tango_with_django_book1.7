@@ -88,3 +88,5 @@ MEDIA_URL = 'rango/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL)
 
 print("MEDIA_ROOT : " + MEDIA_ROOT)
+
+LOGIN_URL = '/rango/login/'
