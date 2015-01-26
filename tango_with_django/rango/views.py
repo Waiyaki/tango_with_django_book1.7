@@ -1,14 +1,19 @@
+from datetime import datetime
+
 from django.shortcuts import render
-from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
+# from django.contrib.auth import authenticate, login, logout
+# from django.http import HttpResponseRedirect
 
 from .models import Category, Page
 from .forms import CategoryForm, PageForm
-from .forms import UserForm, UserProfileForm
+
+# from .forms import UserForm, UserProfileForm
 
 
 def index(request):
+
     category_list = Category.objects.order_by("-likes")[:5]
     page_list = Page.objects.order_by('-views')[:5]
     page_list = [page for page in page_list if page.views != 0]
@@ -16,11 +21,47 @@ def index(request):
                     'pages': page_list
                     }
 
-    return render(request, 'rango/index.html', context_dict)
+    visits = request.session.get('visits')
+    if not visits:
+        # 'visits' cookie doesn't exist, so set visits to 1
+        visits = 1
+
+    reset_last_visit_time = False
+
+    last_visit = request.session.get('last_visit')
+    if last_visit:
+
+        # cast the last visit time to a Python date/time object
+        last_visit_time = datetime.strptime(last_visit[:-7], "%Y-%m-%d %H:%M:%S")
+
+        # If it has been more than 1 day since the last visit...
+        if(datetime.now() - last_visit_time).seconds > 5:
+            visits = visits + 1
+
+            # flag that the last visit time needs to be updated
+            reset_last_visit_time = True
+    else:
+        # 'last_visit' cookie doesn't exist, flag that it should be set
+        reset_last_visit_time = True
+
+    if reset_last_visit_time:
+        request.session['last_visit'] = str(datetime.now())
+        request.session['visits'] = visits
+
+    context_dict['visits'] = visits
+    response = render(request, 'rango/index.html', context_dict)
+
+    # return the response back to the user
+    return response
 
 
 def about(request):
-    return render(request, 'rango/about.html', {})
+    visits = request.session.get('visits')
+    if not visits:
+        visits = 1
+        request.session['visits'] = visits
+    context_dict = {'visits': visits}
+    return render(request, 'rango/about.html', context_dict)
 
 
 def category(request, category_name_slug):
@@ -88,6 +129,7 @@ def add_page(request, category_name_slug):
     return render(request, 'rango/add_page.html', context_dict)
 
 
+"""
 def register(request):
     # Was the registration successful? Initially False
     registered = False
@@ -165,11 +207,12 @@ def user_login(request):
 
 
 @login_required
-def restricted(request):
-    return HttpResponse("Since you are logged in, you can see this.")
-
-
-@login_required
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect('/rango/')
+"""
+
+
+@login_required
+def restricted(request):
+    return HttpResponse("Since you are logged in, you can see this.")
